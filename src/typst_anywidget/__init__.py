@@ -7,7 +7,7 @@ import traitlets
 try:
     __version__ = importlib.metadata.version("typst_anywidget")
 except importlib.metadata.PackageNotFoundError:
-    __version__ = "unknown"
+    __version__ = "0.1"
 
 
 class Widget(anywidget.AnyWidget):

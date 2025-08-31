@@ -3,7 +3,9 @@
 		"dev": "npm run build -- --sourcemap=inline --watch",
 		"build": "esbuild js/widget.js --minify --format=esm --bundle --outdir=src/typst_anywidget/static"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"prism-code-editor": "^4.1.0"
+	},
 	"devDependencies": {
 		"esbuild": "^0.25.4"
 	}
