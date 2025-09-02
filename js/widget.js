@@ -61,22 +61,20 @@ languages["typst"] = {
   ],
 };
 
-const debounce = (callback, wait) => {
+function debounce(callback, wait) {
   let timeoutId = null;
 
   return (...args) => {
     window.clearTimeout(timeoutId);
-
     timeoutId = window.setTimeout(() => {
       callback.apply(null, args);
     }, wait);
   };
-};
+}
 
 function render({ model, el }) {
   let typst_code = () => model.get("value");
   let debounce_val = () => model.get("debounce");
-
   let editorContainer = document.createElement("div");
   editorContainer.className = "editorContainer";
   editorContainer.setAttribute("id", "editorContainer");
@@ -95,7 +93,7 @@ function render({ model, el }) {
     debounce((ev) => {
       model.set("value", editor.value);
       model.save_changes();
-    }, debounce_val),
+    }, model.get("debounce")),
   );
   el.appendChild(editorContainer);
 }
