@@ -9,8 +9,6 @@ import {
 import "prism-code-editor/prism/languages/markup";
 import { languages } from "prism-code-editor/prism";
 
-// console.log(languages["html"]);
-
 // Typst highlighting adapted from https://github.com/Mc-Zen/prism-typst/tree/master
 const typs_math = {
   // comment: comment,
@@ -63,8 +61,22 @@ languages["typst"] = {
   ],
 };
 
+const debounce = (callback, wait) => {
+  let timeoutId = null;
+
+  return (...args) => {
+    window.clearTimeout(timeoutId);
+
+    timeoutId = window.setTimeout(() => {
+      callback.apply(null, args);
+    }, wait);
+  };
+};
+
 function render({ model, el }) {
   let typst_code = () => model.get("value");
+  let debounce_val = () => model.get("debounce");
+
   let editorContainer = document.createElement("div");
   editorContainer.className = "editorContainer";
   editorContainer.setAttribute("id", "editorContainer");
@@ -73,14 +85,18 @@ function render({ model, el }) {
     {
       language: "typst",
       theme: "github-light",
+      wordWrap: true,
     },
     () => console.log("ready"),
   );
 
-  editor.textarea.addEventListener("input", () => {
-    model.set("value", editor.value);
-    model.save_changes();
-  });
+  editor.textarea.addEventListener(
+    "input",
+    debounce((ev) => {
+      model.set("value", editor.value);
+      model.save_changes();
+    }, debounce_val),
+  );
   el.appendChild(editorContainer);
 }
 export default { render };

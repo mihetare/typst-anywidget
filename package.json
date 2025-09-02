@@ -4,6 +4,7 @@
 		"build": "esbuild js/widget.js --minify --format=esm --bundle --outdir=src/typst_anywidget/static"
 	},
 	"dependencies": {
+		"@myriaddreamin/typst-ts-node-compiler": "^0.6.1-rc3",
 		"prism-code-editor": "^4.1.0"
 	},
 	"devDependencies": {

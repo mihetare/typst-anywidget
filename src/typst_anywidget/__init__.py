@@ -14,5 +14,7 @@ class TypstInput(anywidget.AnyWidget):
     _esm = pathlib.Path(__file__).parent / "static" / "widget.js"
     _css = pathlib.Path(__file__).parent / "static" / "widget.css"
     value = traitlets.Unicode("").tag(sync=True)
-    def __init__(self, value: value) -> None:
-          super().__init__(value=value)
+    debounce = traitlets.Int(250).tag(sync=True)
+
+    def __init__(self, value: str = "", debounce: int = 50,) -> None:
+          super().__init__(value=value, debounce=debounce)
