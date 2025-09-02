@@ -78,6 +78,7 @@ function render({ model, el }) {
   let editorContainer = document.createElement("div");
   editorContainer.className = "editorContainer";
   editorContainer.setAttribute("id", "editorContainer");
+  // Create editor
   const editor = minimalEditor(
     editorContainer,
     {
@@ -87,7 +88,16 @@ function render({ model, el }) {
     },
     () => console.log("ready"),
   );
-
+  // Add on change function to listen to changes from python
+  function on_change() {
+    let new_my_value = model.get("value");
+    if (editor.value == new_my_value) {
+      console.log("Editor value is equal to new my value");
+    }
+    console.log(`The 'my_value' changed to: ${new_my_value}`);
+  }
+  model.on("change:value", on_change);
+  // A debounced event listener for saving the inputs into the widget
   editor.textarea.addEventListener(
     "input",
     debounce((ev) => {
