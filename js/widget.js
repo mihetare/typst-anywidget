@@ -92,9 +92,10 @@ function render({ model, el }) {
   function on_change() {
     let new_my_value = model.get("value");
     if (editor.value == new_my_value) {
-      console.log("Editor value is equal to new my value");
+      // console.log("Editor value is equal to new my value");
+    } else {
     }
-    console.log(`The 'my_value' changed to: ${new_my_value}`);
+    // console.log(`The 'my_value' changed to: ${new_my_value}`);
   }
   model.on("change:value", on_change);
   // A debounced event listener for saving the inputs into the widget
