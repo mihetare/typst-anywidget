@@ -84,10 +84,16 @@ function render({ model, el }) {
     {
       language: "typst",
       theme: "github-light",
-      wordWrap: true,
     },
     () => console.log("ready"),
   );
+  //Set some additional options.
+  editor.setOptions({
+    readOnly: false,
+    lineNumbers: true,
+    lineWrapping: true,
+    wordWrap: true,
+  });
   // Add on change function to listen to changes from python
   function on_change() {
     let new_my_value = model.get("value");
