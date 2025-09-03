@@ -24,13 +24,15 @@ class TypstInput(anywidget.AnyWidget):
     _css = pathlib.Path(__file__).parent / "static" / "widget.css"
     value = traitlets.Unicode("").tag(sync=True)
     debounce = traitlets.Int(250).tag(sync=True)
-    def __init__(self, value: str = "", debounce: int = 250,) -> None:
-        super().__init__(value=value, debounce=debounce)
+    typstoutput = traitlets.Unicode("").tag(sync=True)
+    sysinput = traitlets.Dict({}).tag(sync=True)
 
-    def setvalue(self):
-        self.value = "asdddas"
+    def __init__(self, value: str = "", debounce: int = 250, typstoutput: str = "", sysinput: dict = {}) -> None:
+        super().__init__(value=value, debounce=debounce, typstoutput=typstoutput, sysinput=sysinput)
+
+    def setTypstInput(self, value):
+        self.value = value
 
     def getSvgRepr(self):
-        #self.value
-        aa = typst.compile(self.value.encode("utf-8"), format='svg' ) # sys_inputs=sys_inputs,
-        return outputsvg_repr(aa)
+        pythonCompilerOutput = typst.compile(self.value.encode("utf-8"), format='svg', sys_inputs=self.sysinput ) # sys_inputs=sys_inputs,
+        return outputsvg_repr(pythonCompilerOutput)
