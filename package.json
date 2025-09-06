@@ -11,6 +11,7 @@
 		"prism-code-editor": "^4.1.0"
 	},
 	"devDependencies": {
-		"esbuild": "^0.25.4"
+		"esbuild": "^0.25.4",
+		"esbuild-plugin-wasm": "^1.1.0"
 	}
 }

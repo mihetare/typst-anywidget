@@ -1,13 +1,30 @@
 import "./widget.css";
-import {
-  minimalEditor,
-  basicEditor,
-  readonlyEditor,
-} from "prism-code-editor/setups";
+import { minimalEditor } from "prism-code-editor/setups";
 
 // Importing Prism grammars
 import "prism-code-editor/prism/languages/markup";
 import { languages } from "prism-code-editor/prism";
+
+// import { add, subtract } from "./typst_compiler";
+import { $typst } from "@myriaddreamin/typst.ts";
+//import typstCompilerData from "../node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm";
+//import typstRendererData from "../node_modules/@myriaddreamin/typst-ts-renderer/pkg/typst_ts_renderer_bg.wasm";
+// $typst.setCompilerInitOptions({
+//   getModule: () =>
+//     "../node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm",
+// });
+
+// $typst.setRendererInitOptions({
+//   getModule: () => "./typst_ts_renderer_bg.wasm",
+// });
+
+console.log(
+  (
+    await $typst.svg({
+      mainContent: "Hello, typst!",
+    })
+  ).length,
+);
 
 // Typst highlighting adapted from https://github.com/Mc-Zen/prism-typst/tree/master
 const typs_math = {
@@ -72,6 +89,12 @@ function debounce(callback, wait) {
   };
 }
 
+// async function typstCompiler() {
+//   const mainContent = "Hello, typst!";
+//   console.log(await $typst.svg({ mainContent })); //
+//   return "Hello";
+// }
+
 function render({ model, el }) {
   let typst_code = () => model.get("value");
   let debounce_val = () => model.get("debounce");
@@ -94,6 +117,9 @@ function render({ model, el }) {
     lineWrapping: true,
     wordWrap: true,
   });
+  //Typst compiler
+  //typstCompiler();
+
   // Add on change function to listen to changes from python
   function on_change() {
     let new_my_value = model.get("value");
