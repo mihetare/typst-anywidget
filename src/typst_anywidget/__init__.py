@@ -33,6 +33,10 @@ class TypstInput(anywidget.AnyWidget):
     def setTypstInput(self, value):
         self.value = value
 
-    def getSvgRepr(self):
+    def compileTypst(self):
         pythonCompilerOutput = typst.compile(self.value.encode("utf-8"), format='svg', sys_inputs=self.sysinput ) # sys_inputs=sys_inputs,
-        return outputsvg_repr(pythonCompilerOutput)
+        return pythonCompilerOutput
+
+    def getSvgRepr(self):
+        self.compileTypst()
+        return outputsvg_repr(self.compileTypst())

@@ -68,12 +68,6 @@ function debounce(callback, wait) {
   };
 }
 
-// async function typstCompiler() {
-//   const mainContent = "Hello, typst!";
-//   console.log(await $typst.svg({ mainContent })); //
-//   return "Hello";
-// }
-
 function render({ model, el }) {
   let typst_code = () => model.get("value");
   let debounce_val = () => model.get("debounce");
@@ -96,8 +90,6 @@ function render({ model, el }) {
     lineWrapping: true,
     wordWrap: true,
   });
-  //Typst compiler
-  //typstCompiler();
 
   // Add on change function to listen to changes from python
   function on_change() {
