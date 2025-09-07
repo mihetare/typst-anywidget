@@ -5,27 +5,6 @@ import { minimalEditor } from "prism-code-editor/setups";
 import "prism-code-editor/prism/languages/markup";
 import { languages } from "prism-code-editor/prism";
 
-// import { add, subtract } from "./typst_compiler";
-import { $typst } from "@myriaddreamin/typst.ts";
-//import typstCompilerData from "../node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm";
-//import typstRendererData from "../node_modules/@myriaddreamin/typst-ts-renderer/pkg/typst_ts_renderer_bg.wasm";
-// $typst.setCompilerInitOptions({
-//   getModule: () =>
-//     "../node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm",
-// });
-
-// $typst.setRendererInitOptions({
-//   getModule: () => "./typst_ts_renderer_bg.wasm",
-// });
-
-console.log(
-  (
-    await $typst.svg({
-      mainContent: "Hello, typst!",
-    })
-  ).length,
-);
-
 // Typst highlighting adapted from https://github.com/Mc-Zen/prism-typst/tree/master
 const typs_math = {
   // comment: comment,
