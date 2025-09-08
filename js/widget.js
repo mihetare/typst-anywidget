@@ -71,9 +71,14 @@ function debounce(callback, wait) {
 function render({ model, el }) {
   let typst_code = () => model.get("value");
   let debounce_val = () => model.get("debounce");
+  let svgInput = () => model.get("svgInput");
   let editorContainer = document.createElement("div");
+  let svgContainer = document.createElement("div");
   editorContainer.className = "editorContainer";
   editorContainer.setAttribute("id", "editorContainer");
+  svgContainer.className = "svgContainer";
+  svgContainer.setAttribute("id", "svgContainer");
+
   // Create editor
   const editor = minimalEditor(
     editorContainer,
@@ -91,6 +96,10 @@ function render({ model, el }) {
     wordWrap: true,
   });
 
+  function on_svg_change() {
+    svgContainer.innerHTML = model.get("svgInput");
+  }
+  model.on("change:svgInput", on_svg_change);
   // Add on change function to listen to changes from python
   function on_change() {
     let new_my_value = model.get("value");
@@ -110,5 +119,6 @@ function render({ model, el }) {
     }, model.get("debounce")),
   );
   el.appendChild(editorContainer);
+  el.appendChild(svgContainer);
 }
 export default { render };

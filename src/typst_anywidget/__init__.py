@@ -1,9 +1,7 @@
 import importlib.metadata
 import pathlib
-
 import anywidget
 import traitlets
-
 import typst
 
 try:
@@ -24,19 +22,18 @@ class TypstInput(anywidget.AnyWidget):
     _css = pathlib.Path(__file__).parent / "static" / "widget.css"
     value = traitlets.Unicode("").tag(sync=True)
     debounce = traitlets.Int(250).tag(sync=True)
-    typstoutput = traitlets.Unicode("").tag(sync=True)
+    svgInput = traitlets.Unicode("").tag(sync=True)
     sysinput = traitlets.Dict({}).tag(sync=True)
-
-    def __init__(self, value: str = "", debounce: int = 250, typstoutput: str = "", sysinput: dict = {}) -> None:
-        super().__init__(value=value, debounce=debounce, typstoutput=typstoutput, sysinput=sysinput)
+    op = None
+    def __init__(self, value: str = "", debounce: int = 250, svgInput: str = "", sysinput: dict = {}) -> None:
+        super().__init__(value=value, debounce=debounce, svgInput=svgInput, sysinput=sysinput)
 
     def setTypstInput(self, value):
         self.value = value
 
     def compileTypst(self):
-        pythonCompilerOutput = typst.compile(self.value.encode("utf-8"), format='svg', sys_inputs=self.sysinput ) # sys_inputs=sys_inputs,
-        return pythonCompilerOutput
-
+        self.op = typst.compile(self.value.encode("utf-8"), format='svg', sys_inputs=self.sysinput ) # sys_inputs=sys_inputs,
+        self.svgInput = self.op.decode('ASCII')
     def getSvgRepr(self):
         self.compileTypst()
-        return outputsvg_repr(self.compileTypst())
+        return outputsvg_repr(self.op)
