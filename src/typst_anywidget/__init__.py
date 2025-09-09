@@ -3,7 +3,8 @@ import pathlib
 import anywidget
 import traitlets
 import typst
-
+import threading
+from tqdm.std import Bar
 try:
     __version__ = importlib.metadata.version("typst_anywidget")
 except importlib.metadata.PackageNotFoundError:
@@ -27,13 +28,21 @@ class TypstInput(anywidget.AnyWidget):
     op = None
     def __init__(self, value: str = "", debounce: int = 250, svgInput: str = "", sysinput: dict = {}) -> None:
         super().__init__(value=value, debounce=debounce, svgInput=svgInput, sysinput=sysinput)
+        self.observe(self.compileTypst, names='value')
 
     def setTypstInput(self, value):
         self.value = value
 
-    def compileTypst(self):
-        self.op = typst.compile(self.value.encode("utf-8"), format='svg', sys_inputs=self.sysinput ) # sys_inputs=sys_inputs,
-        self.svgInput = self.op.decode('ASCII')
+    # def compileTypst(self):
+    #     self.op = typst.compile(self.value.encode("utf-8"), format='svg', sys_inputs=self.sysinput ) # sys_inputs=sys_inputs,
+    #     self.svgInput = self.op.decode('ASCII')
+
+    def compileTypst(self, value):
+        try:
+            self.op = typst.compile(value["new"].encode("utf-8"), format='svg', sys_inputs=self.sysinput ) # sys_inputs=sys_inputs,
+            self.svgInput = self.op.decode('ASCII')
+        except Exception as e:
+            print(f"Error compiling Typst: {e}")
     def getSvgRepr(self):
-        self.compileTypst()
+        #self.compileTypst()
         return outputsvg_repr(self.op)
