@@ -12,13 +12,16 @@ except importlib.metadata.PackageNotFoundError:
     __version__ = "0.0.1"
 
 
-def typstThreadCompiler(inputQueue,outputQueue):
+def typstThreadCompiler(inputQueue,outputQueue, opiomonitor):
     while True:
         inputData = inputQueue.get()
         try:
-            outputQueue.put(typst.compile(inputData[0]["new"].encode("utf-8"), format='svg', sys_inputs=inputData[1]))
+            op = typst.compile(inputData[0]["new"].encode("utf-8"), format='svg', sys_inputs=inputData[1])
+            outputQueue.put(op)
+            opiomonitor()
         except Exception as e:
-            outputQueue.put(f"Error: {str(e)}")
+            pass
+            # outputQueue.put(f"Error: {str(e)}")
         # inputQueue.task_done()
 
 class outputsvg_repr:
@@ -43,18 +46,40 @@ class TypstInput(anywidget.AnyWidget):
         self.compilerThreads = []
         self.inputQueue = queue.Queue()
         self.outputQueue = queue.Queue()
-        self.compilerWorker = threading.Thread(target=typstThreadCompiler, args=(self.inputQueue,self.outputQueue))
+        self.compilerWorker = threading.Thread(target=typstThreadCompiler, args=(self.inputQueue,self.outputQueue,self.opMointor, ))
         self.compilerWorker.start()
         self.op = None
+
+    def opMointor(self):
+        pass
+        # self.svgInput = self.outputQueue.get().decode('ASCII')
 
     def setTypstInput(self, value):
         self.value = value
 
     def compileTypst(self, value):
         try:
-            self.op = typst.compile(value["new"].encode("utf-8"), format='svg', sys_inputs=self.sysinput ) # sys_inputs=sys_inputs,
+            # self.op = typst.compile(value["new"].encode("utf-8"), format='svg', sys_inputs=self.sysinput ) # sys_inputs=sys_inputs,
             self.inputQueue.put([value, self.sysinput])
-            self.svgInput = self.op.decode('ASCII')
+            # self.op = self.outputQueue.get()
+
+            try:
+                while True:
+                    self.op = self.outputQueue.get(block=False)
+                    done = False
+                    while not done:
+                        try:
+                            self.svgInput = self.op.decode('ASCII')
+                            done = True
+                        except Exception as e:
+                            pass  # just try again to do stuff
+                    self.outputQueue.task_done()
+            except Exception as e:
+                pass  # no more items
+
+
+
+            # self.svgInput = self.op.decode('ASCII')
         except Exception as e:
             print(f"Error compiling Typst: {e}")
 
