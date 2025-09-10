@@ -74,12 +74,26 @@ function render({ model, el }) {
   let svgInput = () => model.get("svgInput");
   let editorContainer = document.createElement("div");
   let svgContainer = document.createElement("div");
-  editorContainer.className = "editorContainer";
   editorContainer.setAttribute("id", "editorContainer");
-  svgContainer.className = "svgContainer";
   svgContainer.setAttribute("id", "svgContainer");
 
-  // Create editor
+  let colunmContainer = document.createElement("div");
+  colunmContainer.setAttribute("id", "colunmContainer");
+  colunmContainer.classList.add("row");
+
+  let leftColumn = document.createElement("div");
+  leftColumn.classList.add("column");
+  leftColumn.setAttribute("id", "leftColumn");
+  leftColumn.appendChild(editorContainer);
+
+  let rightColumn = document.createElement("div");
+  rightColumn.classList.add("column");
+  rightColumn.setAttribute("id", "rightColumn");
+  rightColumn.appendChild(svgContainer);
+
+  colunmContainer.appendChild(leftColumn);
+  colunmContainer.appendChild(rightColumn);
+
   const editor = minimalEditor(
     editorContainer,
     {
@@ -104,10 +118,8 @@ function render({ model, el }) {
   function on_change() {
     let new_my_value = model.get("value");
     if (editor.value == new_my_value) {
-      // console.log("Editor value is equal to new my value");
     } else {
     }
-    // console.log(`The 'my_value' changed to: ${new_my_value}`);
   }
   model.on("change:value", on_change);
   // A debounced event listener for saving the inputs into the widget
@@ -118,7 +130,6 @@ function render({ model, el }) {
       model.save_changes();
     }, model.get("debounce")),
   );
-  el.appendChild(editorContainer);
-  el.appendChild(svgContainer);
+  el.appendChild(colunmContainer);
 }
 export default { render };
