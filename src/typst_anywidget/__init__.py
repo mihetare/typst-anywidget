@@ -11,14 +11,15 @@ try:
 except importlib.metadata.PackageNotFoundError:
     __version__ = "0.0.1"
 
+fonts = typst.Fonts()
 
-def typstThreadCompiler(inputQueue,outputQueue, opiomonitor):
+
+def typstThreadCompiler(inputQueue,outputQueue):
     while True:
         inputData = inputQueue.get()
         try:
-            op = typst.compile(inputData[0]["new"].encode("utf-8"), format='svg', sys_inputs=inputData[1])
+            op = typst.compile(inputData[0]["new"].encode("utf-8"), format='svg', sys_inputs=inputData[1], font_paths=fonts)
             outputQueue.put(op)
-            opiomonitor()
         except Exception as e:
             pass
             # outputQueue.put(f"Error: {str(e)}")
@@ -46,13 +47,9 @@ class TypstInput(anywidget.AnyWidget):
         self.compilerThreads = []
         self.inputQueue = queue.Queue()
         self.outputQueue = queue.Queue()
-        self.compilerWorker = threading.Thread(target=typstThreadCompiler, args=(self.inputQueue,self.outputQueue,self.opMointor, ))
+        self.compilerWorker = threading.Thread(target=typstThreadCompiler, args=(self.inputQueue,self.outputQueue ))
         self.compilerWorker.start()
         self.op = None
-
-    def opMointor(self):
-        pass
-        # self.svgInput = self.outputQueue.get().decode('ASCII')
 
     def setTypstInput(self, value):
         self.value = value
@@ -60,12 +57,17 @@ class TypstInput(anywidget.AnyWidget):
     def compileTypst(self, value):
         try:
             # self.op = typst.compile(value["new"].encode("utf-8"), format='svg', sys_inputs=self.sysinput ) # sys_inputs=sys_inputs,
+            self.outputQueue.put(True)
             self.inputQueue.put([value, self.sysinput])
             # self.op = self.outputQueue.get()
 
             try:
                 while True:
-                    self.op = self.outputQueue.get(block=False)
+                    oqueueout=self.outputQueue.get(block=False)
+                    if oqueueout==True:
+                        oqueueout=self.outputQueue.get(block=True, timeout=1)
+                    #print(oqueueout)
+                    self.op = oqueueout
                     done = False
                     while not done:
                         try:
