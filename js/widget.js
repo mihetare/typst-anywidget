@@ -69,13 +69,16 @@ function debounce(callback, wait) {
 }
 
 function render({ model, el }) {
-  let typst_code = () => model.get("value");
-  let debounce_val = () => model.get("debounce");
-  let svgInput = () => model.get("svgInput");
+  // let typst_code = () => model.get("value");
+  // let debounce_val = () => model.get("debounce");
+  // let svgInput = () => model.get("svgInput");
   let editorContainer = document.createElement("div");
   let svgContainer = document.createElement("div");
+  let errorContainer = document.createElement("div");
+
   editorContainer.setAttribute("id", "editorContainer");
   svgContainer.setAttribute("id", "svgContainer");
+  errorContainer.setAttribute("id", "errorContainer");
 
   let colunmContainer = document.createElement("div");
   colunmContainer.setAttribute("id", "colunmContainer");
@@ -109,7 +112,7 @@ function render({ model, el }) {
     lineWrapping: true,
     wordWrap: true,
   });
-
+  // Set the svg if svgInput parameter changes
   function on_svg_change() {
     svgContainer.innerHTML = model.get("svgInput");
   }
@@ -122,6 +125,12 @@ function render({ model, el }) {
     }
   }
   model.on("change:value", on_change);
+  //Error message handler
+  function on_error_change() {
+    errorContainer.innerHTML = model.get("compilerError");
+  }
+  model.on("change:compilerError", on_error_change);
+
   // A debounced event listener for saving the inputs into the widget
   editor.textarea.addEventListener(
     "input",
@@ -131,5 +140,6 @@ function render({ model, el }) {
     }, model.get("debounce")),
   );
   el.appendChild(colunmContainer);
+  el.appendChild(errorContainer);
 }
 export default { render };

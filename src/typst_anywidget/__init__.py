@@ -19,11 +19,12 @@ def typstThreadCompiler(inputQueue,outputQueue):
         inputData = inputQueue.get()
         try:
             op = typst.compile(inputData[0]["new"].encode("utf-8"), format='svg', sys_inputs=inputData[1], font_paths=fonts)
-            outputQueue.put(op)
+            outputQueue.put([1, op])
         except Exception as e:
-            pass
-            # outputQueue.put(f"Error: {str(e)}")
+            outputQueue.put([-1, f"Error: {str(e)}"])
+            continue
         # inputQueue.task_done()
+
 
 class outputsvg_repr:
     def __init__(self, input):
@@ -40,9 +41,11 @@ class TypstInput(anywidget.AnyWidget):
     debounce = traitlets.Int(250).tag(sync=True)
     svgInput = traitlets.Unicode("").tag(sync=True)
     sysinput = traitlets.Dict({}).tag(sync=True)
+    compilerError = traitlets.Unicode("").tag(sync=True)
 
-    def __init__(self, value: str = "", debounce: int = 250, svgInput: str = "", sysinput: dict = {}) -> None:
-        super().__init__(value=value, debounce=debounce, svgInput=svgInput, sysinput=sysinput)
+
+    def __init__(self, value: str = "", debounce: int = 250, svgInput: str = "", sysinput: dict = {}, compilerError: str = "") -> None:
+        super().__init__(value=value, debounce=debounce, svgInput=svgInput, sysinput=sysinput, compilerError=compilerError)
         self.observe(self.compileTypst, names='value')
         self.compilerThreads = []
         self.inputQueue = queue.Queue()
@@ -56,18 +59,20 @@ class TypstInput(anywidget.AnyWidget):
 
     def compileTypst(self, value):
         try:
-            # self.op = typst.compile(value["new"].encode("utf-8"), format='svg', sys_inputs=self.sysinput ) # sys_inputs=sys_inputs,
-            self.outputQueue.put(True)
+            self.outputQueue.put([0, "Input"]) # Initial input so that the loop knows to wait for proper data.
             self.inputQueue.put([value, self.sysinput])
-            # self.op = self.outputQueue.get()
-
             try:
                 while True:
                     oqueueout=self.outputQueue.get(block=False)
-                    if oqueueout==True:
+                    if oqueueout[0]==0:
                         oqueueout=self.outputQueue.get(block=True, timeout=1)
-                    #print(oqueueout)
-                    self.op = oqueueout
+                    if oqueueout[0]==-1:
+                        self.compilerError = oqueueout[1] # self.outputQueue.get(block=False)[1]
+                        # print(oqueueout)
+                        #self.outputQueue.get(block=False)
+                        # self.compilerError = "awdwd"# self.outputQueue.get(block=False)[1]
+                        continue
+                    self.op = oqueueout[1]
                     done = False
                     while not done:
                         try:
@@ -78,12 +83,8 @@ class TypstInput(anywidget.AnyWidget):
                     self.outputQueue.task_done()
             except Exception as e:
                 pass  # no more items
-
-
-
-            # self.svgInput = self.op.decode('ASCII')
         except Exception as e:
-            print(f"Error compiling Typst: {e}")
+            print(f"Error in the result loop: {e}")
 
     def getSvgRepr(self):
         return outputsvg_repr(self.op)
