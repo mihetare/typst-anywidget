@@ -139,7 +139,7 @@ function render({ model, el }) {
       model.save_changes();
     }, model.get("debounce")),
   );
-  el.appendChild(colunmContainer);
   el.appendChild(errorContainer);
+  el.appendChild(colunmContainer);
 }
 export default { render };

@@ -59,6 +59,7 @@ class TypstInput(anywidget.AnyWidget):
 
     def compileTypst(self, value):
         try:
+            self.compilerError = ""
             self.outputQueue.put([0, "Input"]) # Initial input so that the loop knows to wait for proper data.
             self.inputQueue.put([value, self.sysinput])
             try:
