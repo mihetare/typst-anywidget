@@ -114,6 +114,11 @@ function render({ model, el }) {
   });
   // Set the svg if svgInput parameter changes
   function on_svg_change() {
+    console.log(el.clientWidth);
+    console.log(el.clientHeight);
+    console.log(svgContainer.clientWidth);
+    console.log(editorContainer.clientWidth);
+
     svgContainer.innerHTML = model.get("svgInput");
   }
   model.on("change:svgInput", on_svg_change);

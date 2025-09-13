@@ -5,6 +5,7 @@ import traitlets
 import typst
 import threading
 import queue
+import time
 
 try:
     __version__ = importlib.metadata.version("typst_anywidget")
@@ -60,32 +61,21 @@ class TypstInput(anywidget.AnyWidget):
     def compileTypst(self, value):
         try:
             self.compilerError = ""
-            self.outputQueue.put([0, "Input"]) # Initial input so that the loop knows to wait for proper data.
             self.inputQueue.put([value, self.sysinput])
-            try:
-                while True:
-                    oqueueout=self.outputQueue.get(block=False)
-                    if oqueueout[0]==0:
-                        oqueueout=self.outputQueue.get(block=True, timeout=1)
-                    if oqueueout[0]==-1:
-                        self.compilerError = oqueueout[1] # self.outputQueue.get(block=False)[1]
-                        # print(oqueueout)
-                        #self.outputQueue.get(block=False)
-                        # self.compilerError = "awdwd"# self.outputQueue.get(block=False)[1]
-                        continue
-                    self.op = oqueueout[1]
-                    done = False
-                    while not done:
-                        try:
-                            self.svgInput = self.op.decode('ASCII')
-                            done = True
-                        except Exception as e:
-                            pass  # just try again to do stuff
-                    self.outputQueue.task_done()
-            except Exception as e:
-                pass  # no more items
+            # oqueueout = None
+            # while self.outputQueue.empty():
+            #     time.sleep(0.1)
+            #     continue
+            # else:
+            oqueueout=self.outputQueue.get(block=True)
+            if oqueueout[0]==-1:
+                self.compilerError = oqueueout[1]
+            else:
+                self.op = oqueueout[1]
+                self.svgInput = self.op.decode('ASCII')
         except Exception as e:
-            print(f"Error in the result loop: {e}")
+            self.compilerError = f"Error in the result loop: {e}"
+            # print(f"Error in the result loop: {e}")
 
     def getSvgRepr(self):
         return outputsvg_repr(self.op)
