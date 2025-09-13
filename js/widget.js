@@ -81,8 +81,10 @@ function render({ model, el }) {
   errorContainer.setAttribute("id", "errorContainer");
 
   let colunmContainer = document.createElement("div");
+  colunmContainer.classList.add("container");
   colunmContainer.setAttribute("id", "colunmContainer");
   colunmContainer.classList.add("row");
+  colunmContainer.style.height = el.clientWidth;
 
   let leftColumn = document.createElement("div");
   leftColumn.classList.add("column");
@@ -114,10 +116,10 @@ function render({ model, el }) {
   });
   // Set the svg if svgInput parameter changes
   function on_svg_change() {
-    console.log(el.clientWidth);
-    console.log(el.clientHeight);
-    console.log(svgContainer.clientWidth);
-    console.log(editorContainer.clientWidth);
+    // console.log(el.clientWidth);
+    // console.log(el.clientHeight);
+    // console.log(svgContainer.clientWidth);
+    // console.log(editorContainer.clientWidth);
 
     svgContainer.innerHTML = model.get("svgInput");
   }
