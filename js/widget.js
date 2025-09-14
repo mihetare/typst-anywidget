@@ -5,57 +5,12 @@ import { minimalEditor } from "prism-code-editor/setups";
 import "prism-code-editor/prism/languages/markup";
 import { languages } from "prism-code-editor/prism";
 
-// Typst highlighting adapted from https://github.com/Mc-Zen/prism-typst/tree/master
-const typs_math = {
-  // comment: comment,
-  // raw: raw,
-  // escaped: general_escapes,
-  operator: [
-    /<=>|<==>|<-->|\[\||\|\]|\|\||:=|::=|\.\.\.|=:|!=|>>>|>=|<<<|<==|<=|\|->|=>|\|=>|==>|-->|~~>|~>|>->|->>|<--|<~~|<~|<-<|<<-|<->|->|<-|<<|>>/,
-    /[_\\\^\+\-\*\/&']/,
-  ],
-  string: [/"(?:\\.|[^\\"])*"/, /\$/],
-  function: /\b[a-zA-Z][\w-]*(?=\[|\()/,
-  symbol: [/[a-zA-Z][\w]+/, /#[a-zA-Z][\w]*/],
-};
+//prism-typst
+import { Prismlanguagestyp } from "./prism-typst";
 
-languages["typst"] = {
-  math: {
-    pattern: /\$(?:\\.|[^\\$])*?\$/,
-    inside: typs_math,
-  },
-  comment: {
-    pattern: /\/\/.*/,
-    greedy: true,
-  },
-  heading: {
-    pattern: /^\s*=+ .*/m,
-    greedy: true,
-  },
-  keyword: {
-    pattern:
-      /(?:#|\b)(?:none|auto|let|return|if|else|set|show|context|for|while|not|in|continue|break|include|import|as)\b/,
-    greedy: true,
-  },
-  boolean: {
-    pattern: /(?:#|\b)(?:true|false)\b/,
-    greedy: true,
-  },
-  operator: {
-    pattern: /==|=|\+|\-|\*|\/|\+=|\-=|\*=|\/=|=>|<=|\.\.|<|>/,
-    greedy: true,
-  },
-  string: {
-    pattern: /"(?:\\.|[^\\"])*"/,
-    greedy: true,
-  },
-  number: [
-    /0b[01]+/,
-    /0o[0-7]+/,
-    /0x[\da-fA-F]+/,
-    /(?<![\w-])-?[\d]+\.?[\d]*(e\d+)?(?:in|mm|cm|pt|em|deg|rad|fr|%)?/,
-  ],
-};
+// console.log(Prismlanguagestyp);
+// Typst highlighting adapted from https://github.com/Mc-Zen/prism-typst/tree/master
+languages["typst"] = Prismlanguagestyp;
 
 function debounce(callback, wait) {
   let timeoutId = null;
@@ -84,7 +39,7 @@ function render({ model, el }) {
   colunmContainer.classList.add("container");
   colunmContainer.setAttribute("id", "colunmContainer");
   colunmContainer.classList.add("row");
-  colunmContainer.style.height = el.clientWidth;
+  colunmContainer.style.height = "100vh"; //"484px"; //Math.max(484px, el.clientHeight);
 
   let leftColumn = document.createElement("div");
   leftColumn.classList.add("column");
@@ -107,17 +62,26 @@ function render({ model, el }) {
     },
     () => console.log("ready"),
   );
+
+  function onUpdate() {
+    model.set("value", editor.value);
+    model.save_changes();
+  }
   //Set some additional options.
   editor.setOptions({
     readOnly: false,
     lineNumbers: true,
     lineWrapping: true,
     wordWrap: true,
+    onUpdate: debounce(onUpdate, model.get("debounce")),
   });
   // Set the svg if svgInput parameter changes
   function on_svg_change() {
     // console.log(el.clientWidth);
     // console.log(el.clientHeight);
+    // console.log(el.output_area.max_height);
+    // console.log(el);
+
     // console.log(svgContainer.clientWidth);
     // console.log(editorContainer.clientWidth);
 
@@ -126,6 +90,7 @@ function render({ model, el }) {
   model.on("change:svgInput", on_svg_change);
   // Add on change function to listen to changes from python
   function on_change() {
+    // colunmContainer.style.height = el.clientHeight;
     let new_my_value = model.get("value");
     if (editor.value == new_my_value) {
     } else {
@@ -138,14 +103,6 @@ function render({ model, el }) {
   }
   model.on("change:compilerError", on_error_change);
 
-  // A debounced event listener for saving the inputs into the widget
-  editor.textarea.addEventListener(
-    "input",
-    debounce((ev) => {
-      model.set("value", editor.value);
-      model.save_changes();
-    }, model.get("debounce")),
-  );
   el.appendChild(errorContainer);
   el.appendChild(colunmContainer);
 }
