@@ -39,8 +39,8 @@ function render({ model, el }) {
   colunmContainer.classList.add("container");
   colunmContainer.setAttribute("id", "colunmContainer");
   colunmContainer.classList.add("row");
-  colunmContainer.style.height = "100vh"; //"484px"; //Math.max(484px, el.clientHeight);
-  colunmContainer.style.width = "100vh";
+  colunmContainer.style.height = "484px"; //"100vh"; //"484px"; //Math.max(484px, el.clientHeight);
+  // colunmContainer.style.width = "100vh";
 
   let leftColumn = document.createElement("div");
   leftColumn.classList.add("column");
@@ -78,9 +78,10 @@ function render({ model, el }) {
   });
   // Set the svg if svgInput parameter changes
   function on_svg_change() {
+    //colunmContainer.style.height = el.clientHeight;
     // console.log(el.clientWidth);
     // console.log(el.clientHeight);
-    // console.log(el.output_area.max_height);
+    // console.log(el.style["max-height"]);
     // console.log(el);
 
     // console.log(svgContainer.clientWidth);
