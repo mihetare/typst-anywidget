@@ -74,6 +74,7 @@ function render({ model, el }) {
     lineNumbers: true,
     lineWrapping: true,
     wordWrap: true,
+    value: "",
     onUpdate: debounce(onUpdate, model.get("debounce")),
   });
   // Set the svg if svgInput parameter changes
@@ -83,21 +84,24 @@ function render({ model, el }) {
     // console.log(el.clientHeight);
     // console.log(el.style["max-height"]);
     // console.log(el);
-
     // console.log(svgContainer.clientWidth);
     // console.log(editorContainer.clientWidth);
-
     svgContainer.innerHTML = model.get("svgInput");
   }
-  // model.on("change:svgInput", on_svg_change);
-  // // Add on change function to listen to changes from python
-  // function on_change() {
-  //   // colunmContainer.style.height = el.clientHeight;
-  //   let new_my_value = model.get("value");
-  //   if (editor.value == new_my_value) {
-  //   } else {
-  //   }
-  // }
+  model.on("change:svgInput", on_svg_change);
+  // Add on change function to listen to changes from python
+  function on_change() {
+    // console.log(el.clientHeight);
+
+    // colunmContainer.style.height = el.clientHeight;
+    let new_my_value = model.get("value");
+    if (editor.value == new_my_value) {
+      // Do nothing
+    } else {
+      // Handle the change
+      editor.value = new_my_value;
+    }
+  }
   model.on("change:value", on_change);
   //Error message handler
   function on_error_change() {

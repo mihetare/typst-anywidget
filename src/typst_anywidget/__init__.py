@@ -79,3 +79,18 @@ class TypstInput(anywidget.AnyWidget):
 
     def getSvgRepr(self):
         return outputsvg_repr(self.op)
+
+    def savePdf(self, filename=None):
+        if filename is not  None:
+            try:
+                op = typst.compile(self.value.encode("utf-8"), format='pdf', sys_inputs=self.sysinput, font_paths=fonts)
+                # print(type(op))
+                with open(filename, "wb") as f:
+                    f.write(op)
+                return 1
+            except Exception as e:
+                self.compilerError = f"Error in saving PDF: {e}"
+                return -1
+        else:
+            print("No filename provided")
+            return -1
