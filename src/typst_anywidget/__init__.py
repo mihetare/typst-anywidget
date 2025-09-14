@@ -81,6 +81,12 @@ class TypstInput(anywidget.AnyWidget):
     def getSvgRepr(self):
         return outputsvg_repr(self.op)
 
+    def getSvg(self):
+        return self.op
+
+    def getRawCode(self):
+        return self.value
+
     def savePdf(self, filename=None):
         if filename is not  None:
             try:
