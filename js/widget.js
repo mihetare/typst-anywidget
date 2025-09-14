@@ -40,6 +40,7 @@ function render({ model, el }) {
   colunmContainer.setAttribute("id", "colunmContainer");
   colunmContainer.classList.add("row");
   colunmContainer.style.height = "100vh"; //"484px"; //Math.max(484px, el.clientHeight);
+  colunmContainer.style.width = "100vh";
 
   let leftColumn = document.createElement("div");
   leftColumn.classList.add("column");
