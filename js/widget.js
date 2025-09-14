@@ -89,15 +89,15 @@ function render({ model, el }) {
 
     svgContainer.innerHTML = model.get("svgInput");
   }
-  model.on("change:svgInput", on_svg_change);
-  // Add on change function to listen to changes from python
-  function on_change() {
-    // colunmContainer.style.height = el.clientHeight;
-    let new_my_value = model.get("value");
-    if (editor.value == new_my_value) {
-    } else {
-    }
-  }
+  // model.on("change:svgInput", on_svg_change);
+  // // Add on change function to listen to changes from python
+  // function on_change() {
+  //   // colunmContainer.style.height = el.clientHeight;
+  //   let new_my_value = model.get("value");
+  //   if (editor.value == new_my_value) {
+  //   } else {
+  //   }
+  // }
   model.on("change:value", on_change);
   //Error message handler
   function on_error_change() {
