@@ -17,7 +17,7 @@ def typstThreadCompiler(inputQueue,outputQueue):
     while True:
         inputData = inputQueue.get()
         try:
-            op = typst.compile(inputData[0]["new"].encode("utf-8"), format='svg', sys_inputs=inputData[1], font_paths=fonts)
+            op = typst.compile(inputData[0]["new"].encode("utf-8"), format='svg', sys_inputs=inputData[1], font_paths=fonts, root=inputData[2])
             outputQueue.put([1, op])
         except Exception as e:
             outputQueue.put([-1, f"Error: {str(e)}"])
@@ -51,6 +51,10 @@ class TypstInput(anywidget.AnyWidget):
         self.compilerWorker = threading.Thread(target=typstThreadCompiler, args=(self.inputQueue,self.outputQueue ))
         self.compilerWorker.start()
         self.op = None
+        self.rootFolder="./"
+
+    def setRootFolder(self, value):
+        self.rootFolder = value
 
     def setWidgetHeight(self, value):
         self.widgetHeight = value
@@ -68,7 +72,7 @@ class TypstInput(anywidget.AnyWidget):
     def compileTypst(self, value):
         try:
             self.compilerError = ""
-            self.inputQueue.put([value, self.sysinput])
+            self.inputQueue.put([value, self.sysinput, self.rootFolder])
             oqueueout=self.outputQueue.get(block=True)
             if oqueueout[0]==-1:
                 self.compilerError = oqueueout[1]
